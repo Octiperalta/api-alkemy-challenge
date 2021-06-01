@@ -1,52 +1,43 @@
-const mongoose = require("mongoose");
-const mongooseUniqueValidator = require("mongoose-unique-validator");
-const mongoosePaginate = require("mongoose-paginate-v2");
-const { Schema } = mongoose;
+const { DataTypes } = require("sequelize");
+const { sequelize } = require("../loaders/sequelize");
 
-const userSchema = new Schema(
+const User = sequelize.define(
+  "user",
   {
-    name: {
-      type: String,
-      //? El string sera el mensaje de la excepcion que saldra cuando falte el campo
-      required: [true, "Name field is required"],
+    // Model attributes are defined here
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
-    lastname: {
-      type: String,
-      required: [true, "Lastname field is required"],
+    password: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
+    name: {
+      type: DataTypes.STRING(50),
+      // allowNull defaults to true
     },
     email: {
-      type: String,
-      required: [true, "Email field is required"],
+      type: DataTypes.STRING(50),
+      allowNull: false,
       unique: true,
-      index: true,
-    },
-    birthday: Date,
-    password: {
-      type: String,
-      required: [true, "Password field is required"],
-    },
-    role: {
-      type: String,
-      required: true,
-      //? En el caso de que no se asigne ningun valor al campo de ROLE, por default se le asginara 'USER_ROLE'
-      default: "USER_ROLE",
-      enum: ["USER_ROLE", "ADMIN_ROLE"],
     },
     enabled: {
-      type: Boolean,
-      required: true,
-      default: true,
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
+    },
+    role: {
+      type: DataTypes.ENUM({
+        values: ["USER_ROLE", "ADMIN_ROLE"],
+      }),
+      defaultValue: "USER_ROLE",
     },
   },
-  { timestamps: true }
+  {
+    // Other model options go here
+  }
 );
 
-//? Plugin necesario para el control de los campos unicos
-userSchema.plugin(mongooseUniqueValidator, {
-  message: "duplicated key error",
-});
-
-//? Plugin necesario para poder realiar un paginado
-userSchema.plugin(mongoosePaginate);
-
-module.exports = mongoose.model("User", userSchema);
+module.exports = User;

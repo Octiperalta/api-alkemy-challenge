@@ -1,7 +1,6 @@
 const express = require("express");
 const path = require("path");
 const morgan = require("morgan");
-const { restart } = require("nodemon");
 const swaggerUi = require("swagger-ui-express");
 const config = require("../../config");
 const logger = require("../logger");
@@ -93,7 +92,6 @@ class ExpressServer {
       if (error) {
         logger.error("Error:", error);
         process.exit(1);
-        return;
       }
     });
   }

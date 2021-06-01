@@ -15,10 +15,16 @@ const _emailExists = check("email").custom(async email => {
 });
 const _passwordRequired = check("password", "Password required").notEmpty();
 
+//* [VALIDACIONES GENERALES]
 const postLoginRequestValitdations = [
   _emailRequired,
   _emailValid,
-  //   _emailExists,
+  _passwordRequired,
+  validationResult,
+];
+const postSignUpRequestValitdations = [
+  _emailRequired,
+  _emailValid,
   _passwordRequired,
   validationResult,
 ];
@@ -59,6 +65,7 @@ const hasRole = (...roles) => {
 
 module.exports = {
   postLoginRequestValitdations,
+  postSignUpRequestValitdations,
   validJWT,
   hasRole,
 };

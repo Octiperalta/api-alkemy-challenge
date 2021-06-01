@@ -2,7 +2,6 @@ const express = require("express");
 const Success = require("../handlers/successHandler");
 const authService = require("../services/authService");
 const logger = require("../loaders/logger");
-const AppError = require("../errors/AppError");
 
 /**
  *
@@ -22,6 +21,22 @@ const login = async (req, res, next) => {
   }
 };
 
+/**
+ *
+ * @param {express.Request} req
+ * @param {express.Response} res
+ */
+const signup = async (req, res, next) => {
+  const { email, password } = req.body;
+  try {
+    const successMessage = await authService.signup(email, password);
+    res.status(201).json(new Success(successMessage));
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   login,
+  signup,
 };

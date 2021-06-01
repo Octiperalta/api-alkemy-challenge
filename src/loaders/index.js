@@ -2,10 +2,10 @@
 const expressServer = require("./server/expressServer");
 const config = require("../config");
 const logger = require("./logger");
-const mongooseConnect = require("./mongoose");
+const { sequelizeConnect } = require("./sequelize");
 
 const startServer = async () => {
-  await mongooseConnect();
+  await sequelizeConnect();
   logger.info(
     `╒════════════════════════════════════════╕
       │ ✔ DB loaded and connected successfully │
@@ -18,7 +18,7 @@ const startServer = async () => {
       ╘════════════════════════════╛`
   );
 
-  server.start();
+  await server.start();
   logger.info(
     `╒════════════════════════════════════════════╕
       │ ✔ Server running on http://localhost:${config.port}/ │

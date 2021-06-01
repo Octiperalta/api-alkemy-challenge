@@ -9,10 +9,6 @@ const { validJWT, hasRole } = require("../auth");
 const _nameRequired = check("name", "Name required").not().isEmpty();
 const _emailRequired = check("email", "Email required").not().isEmpty();
 const _emailValid = check("email", "Email is invalid").isEmail();
-const _dateValid = check("birthday").optional().isDate("MM-DD-YYYY");
-const _lastnameRequired = check("lastname", "Lastname required")
-  .not()
-  .isEmpty();
 const _passwordRequired = check("password", "Password required")
   .not()
   .isEmpty();
@@ -45,7 +41,6 @@ const _optionalEmailExists = check("email")
       throw new AppError("Email already exist in the database", 400);
     }
   });
-const _idIsMongoDB = check("id").isMongoId();
 const _idRequired = check("id").not().isEmpty();
 const _idExists = check("id").custom(async (id = "") => {
   const userFound = await userService.findById(id);
@@ -58,23 +53,19 @@ const postRequestValidations = [
   validJWT,
   hasRole(ADMIN_ROLE),
   _nameRequired,
-  _lastnameRequired,
   _emailRequired,
   _emailValid,
   _emailExists,
   _passwordRequired,
   _roleValid,
-  _dateValid,
   validationResult,
 ];
 const putRequestValidations = [
   validJWT,
   hasRole(ADMIN_ROLE),
   _roleValid,
-  _dateValid,
   _optionalEmailExists,
   _optionalEmailValid,
-  _idIsMongoDB,
   _idRequired,
   _idExists,
   validationResult,
@@ -82,14 +73,12 @@ const putRequestValidations = [
 const deleteRequestValidations = [
   validJWT,
   hasRole(ADMIN_ROLE),
-  _idIsMongoDB,
   _idRequired,
   _idExists,
   validationResult,
 ];
 const getByIdRequestValidations = [
   validJWT,
-  _idIsMongoDB,
   _idExists,
   _idRequired,
   validationResult,

@@ -27,6 +27,7 @@ const login = async (email, password) => {
 
     //* Validacion de password
     const validPassword = await bcrypt.compare(password, user.password); //? Compara la pass literal con la encrpitada
+
     if (!validPassword) {
       throw new AppError(
         "Authentication failed! Email and password provided are incorrect.",
@@ -35,13 +36,27 @@ const login = async (email, password) => {
     }
 
     //* Si pasan las dos validaciones, se genera el JWT
-    const token = _encrypt(user._id);
+    const token = _encrypt(user.id);
 
     return {
       token,
-      user: user.name,
+      name: user.name,
       role: user.role,
     };
+  } catch (error) {
+    throw error;
+  }
+};
+
+//*
+const signup = async (email, password) => {
+  const user = { email, password };
+  try {
+    await userService.save(user);
+
+    //todo Enviar mail de confirmacion de registro
+
+    return "User signed up successfully! You can now log in and use the API";
   } catch (error) {
     throw error;
   }
@@ -55,7 +70,7 @@ const _encrypt = id => {
 //* Funcion que se encarga de verificar que el token sea valido
 const validateToken = async token => {
   try {
-    // 1) Validar que lo que venga sea efectivamente un token
+    // 1) Validar que venga un token
     if (!token) {
       throw new AppError("Authentication failed! Token missing.", 401);
     }
@@ -65,6 +80,8 @@ const validateToken = async token => {
     let id;
     try {
       const obj = jwt.verify(token, auth.secret); //? Devuelve la informacion asociada al token si existe; caso contrario, lanzara un excepcion
+      logger.info(`information ${JSON.stringify(obj)}`);
+
       id = obj.id;
       // logger.info(`id retrieved ${id}`);
     } catch (error) {
@@ -107,6 +124,7 @@ const validateRole = (user, ...roles) => {
 
 module.exports = {
   login,
+  signup,
   validateToken,
   validateRole,
 };
